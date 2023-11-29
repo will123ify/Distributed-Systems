@@ -81,14 +81,14 @@ public class Rest_API {
     }
     
 
-    @Path("isPrime/{number}")
+    @Path("insertPrime/{number}")
     @PUT
     @Produces(MediaType.TEXT_PLAIN)
     public String insertPrime(@PathParam ("number") int num) {
         try 
         {
             BufferedWriter writer = new BufferedWriter(new FileWriter(path,true));
-            writer.write(num);
+            writer.write(Integer.toString(num));
             writer.newLine();
             writer.close();
             return "Prime successfully added to the list";
