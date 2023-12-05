@@ -1,0 +1,11 @@
+Using the REST API, implement a small prime numbers web service. The server holds a database of prime and non-prime numbers (the "database" can be implemented any way you choose, simple text file or even a RAM stored list is sufficient). Clients can send requests with a number to check if it is registered in either of the two classes. If not, the client calculates the primeness (use any algorithm or existing API you wish, including the naive version shown during the lecture on Java concurrency) for the number and sends a request to the server to store it in the server’s records.
+You can use the Jersey library for Java to do this, or any other REST API technology, including other programming languages (if you choose to do so, you have to do your research on this, for Python there is a link in the Practicalities). For the Java route, to setup a web-service / Jersey application you can also find a link to a tutorial in the Practicalities section on Blackboard.
+One important thing to keep in mind that you should use the correct REST API operations, that is GET for retrieving the numbers from the server and PUT or POST of submitting them.
+
+Optional
+
+Assume there is more than one server and all servers are aware of each other (know each other's addresses). With each new query to a single server, the other servers are consulted first. Alternatively, the servers can periodically synchronize on their databases so that each one of them has relatively fresh results from other servers stored locally. You choose yourself between the on-demand and periodic approach.
+
+Submission details
+
+Since it is very difficult for us to run all different combinations of REST libraries that you may want to use, please submit your source code for this task along with screenshots showing that it works. Alternatively, make an appointment with Wojciech to show your code in action, or show this working during the lab class.

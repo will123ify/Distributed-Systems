@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 @Path("RestAPI/")
 public class Rest_API {
     
-    static String path = "C:\\Users\\Jimmy\\VSC\\simple-service\\primeNumbers.txt";
+    static String path = "/Users/william.ondrejov/Documents/Lab3/simple-service/primeNumbers.txt";
     // Inserting the first 10000 prime numbers into a .txt document
     public static void main (String[] args) {
         createPrimeList();
