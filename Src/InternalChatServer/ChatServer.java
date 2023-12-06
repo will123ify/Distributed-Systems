@@ -74,8 +74,4 @@ public class ChatServer {
         ChatServer server = new ChatServer(port);
         server.start();
     }
-
-
-    // Inner class to handle client connections
-
 }
