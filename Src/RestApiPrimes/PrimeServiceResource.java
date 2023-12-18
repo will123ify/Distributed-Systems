@@ -3,51 +3,84 @@ package com.example;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Path("primes")
 public class PrimeServiceResource {
 
-    private static List<Integer> primeNumbers = new ArrayList<>();
-    private static List<Integer> nonPrimeNumbers = new ArrayList<>();
+    private static final String PRIME_FILE_PATH = PrimeGeneration.PRIME_FILE_PATH;
+    private static final String NON_PRIME_FILE_PATH = PrimeGeneration.NON_PRIME_FILE_PATH;
 
     @GET
     @Path("check/{number}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkNumber(@PathParam("number") int number) {
-        if (primeNumbers.contains(number)) {
+    public Response checkNumber(@PathParam("number") int number, @QueryParam("isPrime") boolean isPrime) {
+        if (readNumbersFromFile(PRIME_FILE_PATH).contains(number)) {
             return Response.ok().entity(new Result("Prime")).build();
-        } else if (nonPrimeNumbers.contains(number)) {
+        } else if (readNumbersFromFile(NON_PRIME_FILE_PATH).contains(number)) {
             return Response.ok().entity(new Result("Non-Prime")).build();
         } else {
-            // The number doesn't exist in primeNumbers
-            return Response.status(Response.Status.NOT_FOUND).entity(new Result("Number not found")).build();
+            return Response.ok().entity(new Result("Number not found")).build();
         }
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPrimes() {
-        return Response.ok().entity(primeNumbers).build();
     }
 
     @POST
     @Path("store/{number}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response storeNumber(@PathParam("number") int number) {
+    public Response storeNumber(@PathParam("number") int number, @QueryParam("isPrime") boolean isPrime) {
+        List<Integer> primeNumbers = readNumbersFromFile(PRIME_FILE_PATH);
+        List<Integer> nonPrimeNumbers = readNumbersFromFile(NON_PRIME_FILE_PATH);
+
         if (primeNumbers.contains(number)) {
             return Response.ok().entity(new Result("Number already exists and is a prime")).build();
         } else if (nonPrimeNumbers.contains(number)) {
             return Response.ok().entity(new Result("Number already exists and is not a prime")).build();
-        } else {
-            if (isPrime(number)) {
+        } else{
+            if (isPrime) {
                 primeNumbers.add(number);
+                writeNumbersToFile(PRIME_FILE_PATH, primeNumbers);
                 return Response.ok().entity(new Result("Stored as Prime")).build();
             } else {
                 nonPrimeNumbers.add(number);
+                writeNumbersToFile(NON_PRIME_FILE_PATH, nonPrimeNumbers);
                 return Response.ok().entity(new Result("Stored as Non-Prime")).build();
             }
+        }
+    }
+
+    private List<Integer> readNumbersFromFile(String filePath) {
+        List<Integer> numbers = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                try {
+                    int value = Integer.parseInt(line);
+                    numbers.add(value);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return numbers;
+    }
+
+    private void writeNumbersToFile(String filePath, List<Integer> numbers) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (int number : numbers) {
+                writer.write(Integer.toString(number));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     
@@ -60,27 +93,5 @@ public class PrimeServiceResource {
     }
     */
 
-    public static void generatePrimes() {
-        primeNumbers.clear(); // Clear existing primes 
-        for (int i = 2; i <= 100; i++) {
-            if (isPrime(i)) {
-                primeNumbers.add(i);
-            }
-            else {
-                nonPrimeNumbers.add(i);
-            }
-        }
-    }
 
-    public static boolean isPrime(int number) {
-        if (number < 2) {
-            return false;
-        }
-        for (int i = 2; i <= Math.sqrt(number); i++) {
-            if (number % i == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

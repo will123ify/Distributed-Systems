@@ -11,6 +11,7 @@ public class RestClient {
     public static void main(String[] args) {
         // Base URL of the server
         String baseUrl = "http://localhost:8080/";
+        boolean isPrime;
 
         // Run the client and keep taking user input until "exit" is entered
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
@@ -22,9 +23,13 @@ public class RestClient {
                 // Process user input and generate requests
                 if (userInput.startsWith("check")) {
                     int number = extractNumber(userInput);
+                    isPrime = isPrime(number);
+                    //System.out.println("The number " + number + " is " + (isPrime ? "prime" : "not prime"));
                     sendGetRequest(baseUrl + "primes/check/" + number);
                 } else if (userInput.startsWith("store")) {
                     int number = extractNumber(userInput);
+                    isPrime = isPrime(number);
+                    //System.out.println("The number " + number + " is " + (isPrime ? "prime" : "not prime"));
                     sendPostRequest(baseUrl + "primes/store/" + number);
                 } else if (!userInput.equalsIgnoreCase("exit")) {
                     System.out.println("Invalid command. Please try again.");
@@ -104,4 +109,15 @@ public class RestClient {
         return -1; // Return -1 if the number cannot be extracted
     }
 
+    public static boolean isPrime(int number) {
+        if (number < 2) {
+            return false;
+        }
+        for (int i = 2; i <= Math.sqrt(number); i++) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
